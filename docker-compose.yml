@@ -1,0 +1,9 @@
+services:
+  witcher-ssrf:
+    build: .
+    ports:
+      - "4000:4000"
+    command: sleep infinity
+    volumes:
+      - ./app:/app
+      - ./develope:/develope
