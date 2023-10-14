@@ -1,6 +1,23 @@
 import re
 import json
 import urllib.parse
+import requests
+import copy
+
+def request(method, url, headers, data):
+
+    if url.find("http") != 0 and url.find("https") != 0:
+        url = 'http://' + url
+
+    if method == "GET":
+        res = requests.get(url=url, headers=headers)
+    elif method == "POST":
+        if 'Content-type' in headers and "application/json" in headers['Content-type']:
+            res = requests.post(url=url, headers=headers, json=data)
+        else:
+            res = requests.post(url=url, headers=headers, data=data)
+
+    print("Response data : ", res.text)
 
 class Packet:
     def __init__(self, file_path):
@@ -73,5 +90,18 @@ print("Headers:")
 for key, value in packet_instance.headers.items():
     print(f"  {key}: {value}")
 print(f"Body:\n{packet_instance.body}")
-print("Data:")
-print(packet_instance.data)
+print("Data: ", packet_instance.data)
+
+ssrf_data = []
+
+for key in packet_instance.data.keys():
+    sub = packet_instance.data.copy()
+    sub[key] = '127.0.0.1'
+    ssrf_data.append(sub)
+
+print(ssrf_data)
+
+for data in ssrf_data:
+    request(packet_instance.method, packet_instance.headers['Host'], packet_instance.headers, data)
+
+
